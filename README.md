@@ -31,7 +31,7 @@ nbstripout --install             # strips notebook outputs on commit
 pytest
 ```
 
-Nominated machine for freeze, test run and final rerun: TO FILL (OS, Python patch version)
+Nominated machine for freeze, test run and final rerun: Abdalla's MacBook Pro (Apple M2 Pro, macOS 26.6), Python 3.11.15
 
 Seeds, paths, split and cross validation settings live in `config.yaml` and are read through `src/config.py`.
 
