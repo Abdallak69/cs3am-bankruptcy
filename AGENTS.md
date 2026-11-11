@@ -23,3 +23,10 @@ including GenAI assisted code, so keep changes small and readable.
   (inside folds or on out of fold predictions), never on the folds being
   scored or on test data.
 - The five horizon files are never pooled.
+
+## Commits and pull requests
+
+- Never add AI attribution to commit messages, pull requests or code: no
+  `Co-authored-by` trailers, "Made with" or "Generated with" lines for Cursor,
+  Claude or any other AI tool. Commits are authored by the team member who
+  makes them.
