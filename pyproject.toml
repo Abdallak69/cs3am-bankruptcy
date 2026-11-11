@@ -1,0 +1,10 @@
+# Tool configuration only; this repository is not an installable package.
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Puts the repository root on sys.path so tests can import from src.
+pythonpath = ["."]

@@ -1,0 +1,6 @@
+# Changes to the split, the frozen test indices and the evaluation harness
+# need review from the project lead or the authorised deputy.
+# Replace the placeholders with real GitHub usernames.
+/src/split.py     @ABDALLA_HANDLE @CAMERON_HANDLE
+/src/evaluate.py  @ABDALLA_HANDLE @CAMERON_HANDLE
+/data/splits/     @ABDALLA_HANDLE @CAMERON_HANDLE

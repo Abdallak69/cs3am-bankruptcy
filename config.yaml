@@ -1,0 +1,27 @@
+# Project settings. Every path is relative to the repository root and is
+# resolved through src/config.py, never from the working directory.
+
+paths:
+  raw_data_dir: data/raw
+  splits_dir: data/splits
+  results_dir: results
+  # {stem} is the ARFF file name without extension, e.g. 5year.
+  test_indices_pattern: data/splits/{stem}_test_indices.csv
+
+seeds:
+  nominated: 42
+  models: [42, 43, 44, 45, 46]  # to be confirmed at Gate 1
+
+bootstrap:
+  seed: 42  # to be confirmed at Gate 1
+  n_resamples: 2000
+
+split:
+  test_size: 0.2
+
+cv:
+  n_folds: 5
+  n_repeats: 3
+  inner_val_fraction: 0.15
+
+num_threads: 4  # to be confirmed at Gate 1
