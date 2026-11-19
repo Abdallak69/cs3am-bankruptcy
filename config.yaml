@@ -7,6 +7,7 @@ paths:
   results_dir: results
   # {stem} is the ARFF file name without extension, e.g. 5year.
   test_indices_pattern: data/splits/{stem}_test_indices.csv
+  train_indices_pattern: data/splits/{stem}_train_indices.csv
 
 # Published UCI counts for each raw file, before duplicate removal. load.py
 # refuses a file that does not match.

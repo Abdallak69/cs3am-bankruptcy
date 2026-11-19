@@ -15,6 +15,7 @@ https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data
 * Five ARFF files in `data/raw/`. The main experiment uses `5year.arff` (5,910 statements, 410 bankrupt within one year).
 * File numbering runs opposite to the horizon: `1year.arff` is the 5 year horizon.
 * `load.py` checks each file against the published UCI counts, removes exact duplicate rows before the split and logs the count. Each row keeps its position in the raw file as `row_id`.
+* `split.py` makes one stratified 80/20 split of each deduplicated file (seed 42) and writes the training and test `row_id`s once to `data/splits/`. Preprocessing, the models and cross validation get their data from `load_training_set`, which reads the training indices only.
 * Credit: Tomczak, S. (2016), Polish Companies Bankruptcy, UCI Machine Learning Repository, DOI 10.24432/C5F600, CC BY 4.0.
 
 ## Setup
@@ -49,7 +50,7 @@ Outputs are written to `results/` (metrics as JSON, figures as PNG).
 
 ```
 data/raw/            five ARFF files
-data/splits/         frozen test indices (do not edit)
+data/splits/         frozen training and test indices (do not edit)
 src/config.py        repository root and config.yaml loader
 src/load.py          loading, label decoding, count checks, duplicate removal
 src/split.py         frozen stratified 80/20 split, seed 42
@@ -61,13 +62,13 @@ src/evaluate.py      metrics, calibration, bootstrap, hypothesis tests
 src/explain.py       SHAP
 notebooks/           01_eda, 02_models, 03_results
 results/             metrics and figures
-tests/               raw count, loader, test indices guard and config checks
+tests/               raw count, loader, split, test indices guard and config checks
 docs/decision_log.md decisions and reasons
 ```
 
 ## Rules
 
-1. Only `evaluate.py` reads the test indices. The test set is scored once, on Thu 26 Nov.
+1. Only `evaluate.py` reads the test indices. The test set is scored once, on Thu 26 Nov. Everything else loads data through `load_training_set`; no other module or notebook may call `split_file`, which can rebuild the test indices.
 2. Every transform, calibrator and cost threshold is fitted on training data only.
 3. The five data files are never pooled.
 4. All changes reach `main` through a pull request reviewed by Abdalla (or Cameron as deputy).
