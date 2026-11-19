@@ -53,7 +53,7 @@ data/raw/            five ARFF files
 data/splits/         frozen training and test indices (do not edit)
 src/config.py        repository root and config.yaml loader
 src/load.py          loading, label decoding, count checks, duplicate removal
-src/split.py         frozen stratified 80/20 split, seed 42
+src/split.py         frozen stratified 80/20 split, seed 42; shared CV folds
 src/preprocess.py    preprocessing pipeline
 src/baselines.py     original Z', refitted Z', logistic regression
 src/xgb_model.py     XGBoost
