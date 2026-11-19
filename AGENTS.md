@@ -28,5 +28,5 @@ including GenAI assisted code, so keep changes small and readable.
 
 - Never add AI attribution to commit messages, pull requests or code: no
   `Co-authored-by` trailers, "Made with" or "Generated with" lines for Cursor,
-  Claude or any other AI tool. Commits are authored by the team member who
+  Claude, Codex or any other AI tool. Commits are authored by the team member who
   makes them.
