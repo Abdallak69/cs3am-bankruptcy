@@ -37,4 +37,9 @@ cv:
   n_repeats: 3
   inner_val_fraction: 0.15
 
+# Inverse regularisation strengths tried for the refitted Z' and the logistic
+# regression on all 64 ratios.
+baselines:
+  c_grid: [0.01, 0.1, 1, 10]
+
 num_threads: 4
