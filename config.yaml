@@ -8,6 +8,9 @@ paths:
   # {stem} is the ARFF file name without extension, e.g. 5year.
   test_indices_pattern: data/splits/{stem}_test_indices.csv
   train_indices_pattern: data/splits/{stem}_train_indices.csv
+  # {scorer} is one of the five scorer names in src/evaluate.py.
+  oof_predictions_pattern: results/oof/{stem}_{scorer}.csv
+  metrics_dir: results/metrics
 
 # Published UCI counts for each raw file, before duplicate removal. load.py
 # refuses a file that does not match.
