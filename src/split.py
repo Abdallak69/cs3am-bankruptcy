@@ -1,4 +1,4 @@
-"""Frozen stratified 80/20 train/test split.
+"""Frozen stratified 80/20 train/test split and the shared cross validation folds.
 
 Creates one stratified split per file with the nominated seed (42), after
 duplicate removal, and writes the training and test row_ids once to
@@ -6,6 +6,11 @@ data/splits/. The 5year.arff split is reused by every experiment. Apart from
 evaluate.py, this is the only module that touches the test indices, and it
 only writes them. Every other module gets its data from load_training_set,
 which reads the training indices only.
+
+cv_folds gives every scorer the same repeated stratified folds of the
+training rows, so their out of fold predictions are paired, and inner_split
+holds out early stopping rows from the fitting rows of one fold. Neither
+touches the test indices.
 
 Owner: Abdalla (changes need Abdalla; Cameron as authorised deputy).
 """
@@ -15,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RepeatedStratifiedKFold, train_test_split
 
 from src.config import REPO_ROOT, load_config
 from src.load import LABEL, load_file
@@ -158,3 +163,81 @@ def load_training_set(stem: str, config: dict[str, Any] | None = None) -> pd.Dat
         )
     row_ids = pd.read_csv(path)[ROW_ID]
     return load_file(stem, config).loc[row_ids]
+
+
+def cv_folds(
+    stem: str, config: dict[str, Any] | None = None
+) -> list[tuple[int, int, pd.Index, pd.Index]]:
+    """Make the repeated stratified cross validation folds of one file.
+
+    Every scorer uses these folds, so their out of fold predictions are
+    paired. Only the training rows from load_training_set are split.
+
+    Args:
+        stem: File name without extension, e.g. 5year.
+        config: Parsed project configuration, for the fold and repeat counts
+            and the nominated seed. Read from config.yaml if None.
+
+    Returns:
+        One (repeat, fold, fit_row_ids, score_row_ids) tuple per fold, in
+        order of repeat then fold, both numbered from 0. The row_ids are
+        sorted, for selecting rows with .loc.
+    """
+    if config is None:
+        config = load_config()
+    frame = load_training_set(stem, config)
+    n_folds = config["cv"]["n_folds"]
+    splitter = RepeatedStratifiedKFold(
+        n_splits=n_folds,
+        n_repeats=config["cv"]["n_repeats"],
+        random_state=config["seeds"]["nominated"],
+    )
+
+    folds = []
+    # The splitter yields every fold of one repeat before the next repeat.
+    for number, (fit, score) in enumerate(splitter.split(frame, frame[LABEL])):
+        repeat, fold = divmod(number, n_folds)
+        fit_row_ids = pd.Index(frame.index[fit], name=ROW_ID).sort_values()
+        score_row_ids = pd.Index(frame.index[score], name=ROW_ID).sort_values()
+        logger.info(
+            "%s: repeat %d fold %d scores %d rows and %d bankrupt",
+            stem,
+            repeat,
+            fold,
+            len(score_row_ids),
+            int(frame.loc[score_row_ids, LABEL].sum()),
+        )
+        folds.append((repeat, fold, fit_row_ids, score_row_ids))
+    return folds
+
+
+def inner_split(
+    fit_rows: pd.DataFrame, config: dict[str, Any] | None = None
+) -> tuple[pd.Index, pd.Index]:
+    """Hold out early stopping rows from the fitting rows of one fold.
+
+    Only the fitting rows are passed in, so early stopping never sees the
+    fold being scored.
+
+    Args:
+        fit_rows: The fitting rows of one fold, indexed by row_id, with the
+            class column.
+        config: Parsed project configuration, for the inner validation
+            fraction and the nominated seed. Read from config.yaml if None.
+
+    Returns:
+        The row_ids for fitting and the row_ids for early stopping, each
+        sorted.
+    """
+    if config is None:
+        config = load_config()
+    fit, stop = train_test_split(
+        fit_rows.index.to_numpy(),
+        test_size=config["cv"]["inner_val_fraction"],
+        random_state=config["seeds"]["nominated"],
+        stratify=fit_rows[LABEL],
+    )
+    return (
+        pd.Index(fit, name=ROW_ID).sort_values(),
+        pd.Index(stop, name=ROW_ID).sort_values(),
+    )
