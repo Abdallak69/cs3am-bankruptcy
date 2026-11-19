@@ -8,6 +8,15 @@ paths:
   # {stem} is the ARFF file name without extension, e.g. 5year.
   test_indices_pattern: data/splits/{stem}_test_indices.csv
 
+# Published UCI counts for each raw file, before duplicate removal. load.py
+# refuses a file that does not match.
+raw_counts:
+  1year: {rows: 7027, bankrupt: 271}
+  2year: {rows: 10173, bankrupt: 400}
+  3year: {rows: 10503, bankrupt: 495}
+  4year: {rows: 9792, bankrupt: 515}
+  5year: {rows: 5910, bankrupt: 410}
+
 seeds:
   nominated: 42
   models: [42, 43, 44, 45, 46]
