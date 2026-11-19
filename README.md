@@ -14,7 +14,7 @@ https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data
 
 * Five ARFF files in `data/raw/`. The main experiment uses `5year.arff` (5,910 statements, 410 bankrupt within one year).
 * File numbering runs opposite to the horizon: `1year.arff` is the 5 year horizon.
-* `load.py` removes exact duplicate rows before the split and logs the count.
+* `load.py` checks each file against the published UCI counts, removes exact duplicate rows before the split and logs the count. Each row keeps its position in the raw file as `row_id`.
 * Credit: Tomczak, S. (2016), Polish Companies Bankruptcy, UCI Machine Learning Repository, DOI 10.24432/C5F600, CC BY 4.0.
 
 ## Setup
@@ -33,7 +33,7 @@ pytest
 
 Nominated machine for freeze, test run and final rerun: Abdalla's MacBook Pro (Apple M2 Pro, macOS 26.6), Python 3.11.15
 
-Seeds, paths, split and cross validation settings live in `config.yaml` and are read through `src/config.py`.
+Seeds, paths, published raw counts, split and cross validation settings live in `config.yaml` and are read through `src/config.py`.
 
 ## How to run
 
@@ -51,7 +51,7 @@ Outputs are written to `results/` (metrics as JSON, figures as PNG).
 data/raw/            five ARFF files
 data/splits/         frozen test indices (do not edit)
 src/config.py        repository root and config.yaml loader
-src/load.py          loading, label decoding, duplicate removal
+src/load.py          loading, label decoding, count checks, duplicate removal
 src/split.py         frozen stratified 80/20 split, seed 42
 src/preprocess.py    preprocessing pipeline
 src/baselines.py     original Z', refitted Z', logistic regression
@@ -61,7 +61,7 @@ src/evaluate.py      metrics, calibration, bootstrap, hypothesis tests
 src/explain.py       SHAP
 notebooks/           01_eda, 02_models, 03_results
 results/             metrics and figures
-tests/               raw count, test indices guard and config checks
+tests/               raw count, loader, test indices guard and config checks
 docs/decision_log.md decisions and reasons
 ```
 
