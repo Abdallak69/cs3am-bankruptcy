@@ -47,3 +47,19 @@ baselines:
   c_grid: [0.01, 0.1, 1, 10]
 
 num_threads: 4
+
+# PyTorch MLP (plan Section 4). The random search samples n_configurations
+# settings from these choices with the nominated seed; weight decay is drawn
+# log uniformly between its two bounds.
+mlp:
+  n_configurations: 30
+  max_epochs: 300
+  patience: 20
+  batch_size: 256
+  search:
+    class_weighting: [true, false]
+    n_layers: [1, 2, 3]
+    width: [64, 128, 256]
+    dropout: [0.1, 0.3, 0.5]
+    learning_rate: [0.0001, 0.0003, 0.001]
+    weight_decay: [0.00001, 0.001]
